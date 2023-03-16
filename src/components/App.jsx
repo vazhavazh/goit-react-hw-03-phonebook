@@ -6,6 +6,8 @@ import { ContactList } from './ContactList/ContactList';
 
 import { AppStyled, H1, H2 } from './AppStyled';
 
+const USER_KEY = 'contacts';
+
 export class App extends Component {
   state = {
     contacts: [],
@@ -45,6 +47,21 @@ export class App extends Component {
       contact.name.toLowerCase().includes(filter.toLowerCase())
     );
   };
+
+  componentDidMount() {
+    const contacts = localStorage.getItem(USER_KEY);
+    if (contacts && JSON.parse(contacts).length) {
+      this.setState({
+        contacts: JSON.parse(contacts),
+      });
+    }
+  }
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.contacts.length !== this.state.contacts.length) {
+      localStorage.setItem(USER_KEY, JSON.stringify(this.state.contacts));
+    }
+  }
+
   render() {
     const { filter } = this.state;
     const filteredContacts = this.getFilterContacts();
